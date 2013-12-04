@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "private": true,
 	"dependencies": {
-		"dynobj": "https://github.com/heycalmdown/dynobj/archive/master"
+		"dynobj": "https://github.com/heycalmdown/dynobj/archive/master.tar.gz"
 	},
 	"devDependencies": {
 		"heapdump": ""
