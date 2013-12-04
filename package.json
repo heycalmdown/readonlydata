@@ -1,9 +1,9 @@
 {
-    "name": "fo3-readonlydata",
+    "name": "readonlydata",
     "version": "0.1.0",
     "private": true,
 	"dependencies": {
-		"dynobj": ""
+		"dynobj": "https://github.com/heycalmdown/dynobj/archive/master"
 	},
 	"devDependencies": {
 		"heapdump": ""
