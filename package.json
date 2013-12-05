@@ -1,10 +1,15 @@
 {
-    "name": "readonlydata",
-    "version": "0.1.0",
-    "dependencies": {
-    },
-    "devDependencies": {
-    },
-    "optionalDependencies": {
-    }
+  "author": "Kei Son <hey.calmdown@gmail.com>",
+  "name": "readonlydata",
+  "version": "0.1.0",
+  "dependencies": {
+  },
+  "devDependencies": {
+  },
+  "optionalDependencies": {
+  },
+  "repository": {
+  "type": "git",
+  "url": "git://github.com/heycalmdown/readonlydata.git"
+  }
 }
