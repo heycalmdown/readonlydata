@@ -1,12 +1,10 @@
 {
     "name": "readonlydata",
     "version": "0.1.0",
-    "private": true,
-	"dependencies": {
-	},
-	"devDependencies": {
-		"heapdump": ""
-	},
-	"optionalDependencies": {
-	}
+    "dependencies": {
+    },
+    "devDependencies": {
+    },
+    "optionalDependencies": {
+    }
 }
