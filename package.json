@@ -9,7 +9,10 @@
   "optionalDependencies": {
   },
   "repository": {
-  "type": "git",
-  "url": "git://github.com/heycalmdown/readonlydata.git"
+    "type": "git",
+    "url": "git://github.com/heycalmdown/readonlydata.git"
+  },
+  "scripts": {
+    "test": "mocha test"
   }
 }
