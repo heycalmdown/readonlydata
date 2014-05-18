@@ -5,6 +5,7 @@
   "dependencies": {
   },
   "devDependencies": {
+    "mocha": ""
   },
   "optionalDependencies": {
   },
