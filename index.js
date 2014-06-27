@@ -43,4 +43,4 @@ function overrideSerializer(newSerializer, newDeserializer) {
 exports.require = require_;
 exports.createFrom = createFrom;
 exports.overrideSerializer = overrideSerializer;
-
+exports.ReadOnlyData = ReadOnlyData;
