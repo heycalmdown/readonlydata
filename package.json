@@ -1,7 +1,7 @@
 {
   "author": "Kei Son <hey.calmdown@gmail.com>",
   "name": "readonlydata",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "dependencies": {
   },
   "devDependencies": {
