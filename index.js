@@ -14,9 +14,9 @@ function require_(jsonFileName) {
 }
 
 function readFile(jsonFileName) {
-	var rawData = fs.readFileSync(jsonFileName);
+	var buffer = fs.readFileSync(jsonFileName);
 	var sha = crypto.createHash('sha1');
-	sha.update(rawData);
+	sha.update(buffer);
 	var bufFileHash = sha.digest();
 	var bufCacheHash = new Buffer(20);
 	var fd;
@@ -28,18 +28,18 @@ function readFile(jsonFileName) {
 	var result;
 	if (bufCacheHash.toString() === bufFileHash.toString()) { // cache is valid
 		var pos = 20;
-		var bufSize = new Buffer(4);
-		fs.readSync(fd, bufSize, 0, 4, pos);
+		fs.readSync(fd, buffer, 0, 4, pos);
 		pos += 4;
-		var hintSize = bufSize.readUInt32LE(0);
-		var bufHintString = new Buffer(hintSize);
-		fs.readSync(fd, bufHintString, 0, hintSize, pos);
+		var hintSize = buffer.readUInt32LE(0);
+		fs.readSync(fd, buffer, 0, hintSize, pos);
 		pos += hintSize;
-		var hints = JSON.parse(bufHintString);
-		fs.readSync(fd, bufSize, 0, 4, pos);
+		var hints = JSON.parse(buffer.slice(0, hintSize));
+		fs.readSync(fd, buffer, 0, 4, pos);
 		pos += 4;
-		var bufferSize = bufSize.readUInt32LE(0);
-		var buffer = new Buffer(bufferSize);
+		var bufferSize = buffer.readUInt32LE(0);
+		if (bufferSize > buffer.length) {
+			buffer = new Buffer(bufferSize);
+		}
 		fs.readSync(fd, buffer, 0, bufferSize, pos);
 
 		result = new ReadOnlyData();
@@ -47,11 +47,11 @@ function readFile(jsonFileName) {
 		result.init(Object.keys(hints), null, null);
 		result.hints = hints;
 		result.buffer = buffer;
-		result.cursor = buffer.length;
+		result.cursor = bufferSize;
 		result.fromcache = true;
 		result.freeze();
 	} else {
-		result = JSON.parse(rawData);
+		result = JSON.parse(buffer);
 		Object.defineProperty(result, '__hash', {value: bufFileHash});
 		Object.defineProperty(result, '__file', {value: jsonFileName});
 	}
