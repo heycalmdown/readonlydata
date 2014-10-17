@@ -31,12 +31,10 @@ function readFile(jsonFileName) {
 		fs.readSync(fd, buffer, 0, 4, pos);
 		pos += 4;
 		var hintSize = buffer.readUInt32LE(0);
-		fs.readSync(fd, buffer, 0, hintSize, pos);
-		pos += hintSize;
+		fs.readSync(fd, buffer, 0, hintSize + 4, pos);
+		pos += hintSize + 4;
 		var hints = JSON.parse(buffer.slice(0, hintSize));
-		fs.readSync(fd, buffer, 0, 4, pos);
-		pos += 4;
-		var bufferSize = buffer.readUInt32LE(0);
+		var bufferSize = buffer.readUInt32LE(hintSize);
 		if (bufferSize > buffer.length) {
 			buffer = new Buffer(bufferSize);
 		}
@@ -61,21 +59,25 @@ function readFile(jsonFileName) {
 
 function writeCache(readOnlyData, bufFileHash, jsonFileName) {
 	var hintString = JSON.stringify(readOnlyData.hints);
-	var fd = fs.openSync(jsonFileName + '.cache', 'w');
+	var tmpPath = jsonFileName + '.tmp';
+	var fd;
+	try {
+		fd = fs.openSync(tmpPath, 'wx');
+	} catch (e) {
+		return;
+	}
 	var pos = 0;
 	fs.writeSync(fd, bufFileHash, 0, 20, pos);
 	pos += 20;
-	var bufHints = new Buffer(4 + hintString.length);
-	bufHints.writeUInt32LE(hintString.length, 0);
-	bufHints.write(hintString,  4);
-	fs.writeSync(fd, bufHints, 0, bufHints.length, pos);
-	pos += bufHints.length;
-	var bufSize = new Buffer(4);
-	bufSize.writeUInt32LE(readOnlyData.buffer.length, 0);
-	fs.writeSync(fd, bufSize, 0, 4, pos);
-	pos += 4;
+	var buffer = new Buffer(8 + hintString.length);
+	buffer.writeUInt32LE(hintString.length, 0);
+	buffer.write(hintString,  4);
+	buffer.writeUInt32LE(readOnlyData.buffer.length, hintString.length + 4);
+	fs.writeSync(fd, buffer, 0, buffer.length, pos);
+	pos += buffer.length;
 	fs.writeSync(fd, readOnlyData.buffer, 0, readOnlyData.buffer.length, pos);
 	fs.closeSync(fd);
+	fs.renameSync(tmpPath, jsonFileName + '.cache');
 }
 
 function createFrom(jsonData, jsonFileName) {
