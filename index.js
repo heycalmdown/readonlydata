@@ -103,6 +103,8 @@ function createFrom(jsonData, jsonFileName) {
 	}
 	if (jsonData.__hash && jsonData.__file && !serializer && !deserializer) {
 		writeCache(aReadOnlyData, jsonData.__hash, jsonData.__file);
+		Object.defineProperty(aReadOnlyData, '__hash', {value: jsonData.__hash});
+		Object.defineProperty(aReadOnlyData, '__file', {value: jsonData.__file});
 	}
 	jsonData = null;
 	keys = null;
