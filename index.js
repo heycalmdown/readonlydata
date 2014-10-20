@@ -15,8 +15,8 @@ function require_(jsonFileName) {
 	return data;
 }
 
-function getCachePath(srcPath, bufHash) {
-	srcPath += '.' + bufHash.toString('hex');
+function getCachePath(srcPath, hashString) {
+	srcPath += '.' + hashString;
 	return cacheDirPath ? path.join(cacheDirPath, path.basename(srcPath)) : srcPath;
 }
 
@@ -24,16 +24,16 @@ function readFile(jsonFileName) {
 	var buffer = fs.readFileSync(jsonFileName);
 	var sha = crypto.createHash('sha1');
 	sha.update(buffer);
-	var bufFileHash = sha.digest();
+	var hashString = sha.digest('hex');
 	var bufCacheHash = new Buffer(20);
 	var fd;
 	try {
-		fd = fs.openSync(getCachePath(jsonFileName, bufFileHash), 'r');
+		fd = fs.openSync(getCachePath(jsonFileName, hashString), 'r');
 		fs.readSync(fd, bufCacheHash, 0, 20, 0);
 	} catch (e) {
 	}
 	var result;
-	if (bufCacheHash.toString() === bufFileHash.toString()) { // cache is valid
+	if (bufCacheHash.toString('hex') === hashString) { // cache is valid
 		var pos = 20;
 		pos += fs.readSync(fd, buffer, 0, 4, pos);
 		var hintSize = buffer.readUInt32LE(0);
@@ -56,15 +56,15 @@ function readFile(jsonFileName) {
 	} else {
 		result = JSON.parse(buffer);
 	}
-	Object.defineProperty(result, '__hash', {value: bufFileHash});
+	Object.defineProperty(result, '__hash', {value: hashString});
 	Object.defineProperty(result, '__file', {value: jsonFileName});
 	fd && fs.closeSync(fd);
 	return result;
 }
 
-function writeCache(readOnlyData, bufFileHash, jsonFileName) {
+function writeCache(readOnlyData, hashString, jsonFileName) {
 	var hintString = JSON.stringify(readOnlyData.hints);
-	var cachePath = getCachePath(jsonFileName, bufFileHash);
+	var cachePath = getCachePath(jsonFileName, hashString);
 	var tmpPath = jsonFileName + '.tmp';
 	var fd;
 	try {
@@ -73,7 +73,7 @@ function writeCache(readOnlyData, bufFileHash, jsonFileName) {
 		return;
 	}
 	var pos = 0;
-	pos += fs.writeSync(fd, bufFileHash, 0, 20, pos);
+	pos += fs.writeSync(fd, new Buffer(hashString, 'hex'), 0, 20, pos);
 	var buffer = new Buffer(8 + hintString.length);
 	buffer.writeUInt32LE(hintString.length, 0);
 	buffer.write(hintString,  4);
