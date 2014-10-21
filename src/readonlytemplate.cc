@@ -97,7 +97,7 @@ public:
 			Handle<Function> accessorFn = Handle<Function>(Function::Cast(*accessor));
 			int argc=0;
 			Local<Value> result = accessorFn->Call(info.This(), argc, NULL);
-			return Local<Array>::Cast(result);
+			return scope.Close(Local<Array>::Cast(result));
 		}
 		return scope.Close(Handle<Array>(NULL));
 	}
