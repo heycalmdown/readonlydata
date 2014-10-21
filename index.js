@@ -65,7 +65,7 @@ function readFile(jsonFileName) {
 function writeCache(readOnlyData, hashString, jsonFileName) {
 	var hintString = JSON.stringify(readOnlyData.hints);
 	var cachePath = getCachePath(jsonFileName, hashString);
-	var tmpPath = jsonFileName + '.tmp';
+	var tmpPath = cachePath + '.tmp';
 	var fd;
 	try {
 		fd = fs.openSync(tmpPath, 'wx');
